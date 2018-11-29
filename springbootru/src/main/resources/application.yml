@@ -1,0 +1,44 @@
+server:
+  port: 8090
+
+spring:
+  thymeleaf:
+      cache: false
+  # Single file max size
+  servlet:
+    multipart:
+      max-file-size: 50MB
+    # All files max size
+      max-request-size: 50MB
+
+
+#spring:
+#  datasource:
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+#    username: root
+#    password: root
+#  redis:
+#    host: 127.0.0.1
+#    port: 6379
+#    #password: 1
+#    database: 1
+#    jedis:
+#      pool:
+#        max-active: 8
+#        max-wait: -1
+#        max-idle: 500
+#        min-idle: 0
+#    timeout: 2000
+#  activemq:
+#    broker-url: tcp://localhost:61616
+#    user: admin
+#    password: admin
+#    in-memory: true
+#    pool:
+#      enabled: true
+#
+#jpa:
+#  hibernate:
+#    ddl-auto: update
+#    show-sql: true
