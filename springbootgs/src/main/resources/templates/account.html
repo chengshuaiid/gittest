@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/Vue.min.js"></script>
+    <script src="/static/vue-resource.js"></script>
+    <script src="/static/jquery-1.11.3.js"></script>
+    <script src="/static/extend.js"></script>
+</head>
+<body>
+<div id="updata_acc">
+    <form>
+        <input type="text" id="id" th:value="${account.id}"/><br/>
+        <input type="text" id="name" th:value="${account.name}"/><br/>
+        <input type="text" id="money" th:value="${account.money}"/><br/>
+        <input type="text" id="userId" th:value="${account.userId}"/><br/>
+        <input type="button" v-on:click="updataSubmit()" value="提交"/>
+    </form>
+</div>
+
+<script>
+    var updata = new Vue({
+        el: "#updata_acc",
+        methods: {
+            updataSubmit: function () {
+                var account = {};
+                account.id = $("#id").val();
+                account.name = $("#name").val();
+                account.money = $("#money").val();
+                account.userId = $("#userId").val();
+                alert(account.id+" "+account.name+" "+account.money+" "+account.userId);
+                $.request("/user/updateAccount", account, function (data) {
+                    if (data) {
+                        alert("test");
+                    }
+                });
+            }
+        }
+    })
+
+    $(document).ready(function(){
+
+    });
+</script>
+
+</body>
+</html>

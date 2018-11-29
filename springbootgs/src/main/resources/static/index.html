@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/Vue.min.js"></script>
+    <script src="/static/vue-resource.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>-->
+    <script src="/static/jquery-1.11.3.js"></script>
+    <script src="/static/jquery-1.10.2.plugin.js"></script>
+</head>
+
+<!--<div id="userlist">
+    <input type="button" @click="buttonClick" value="登录测试"/>
+    <br/>
+
+    &lt;!&ndash;<span id="login_result"></span>&ndash;&gt;
+
+    <ul>
+        <li v-for="temp of listtemp">{{temp.username}}&#45;&#45;{{temp.password}}</li>
+    </ul>
+</div>-->
+
+
+<div id="user_list1">
+    <input type="button" v-on:click="showUserList()" value="登录测试"/>
+    <br/>
+    用户属性列表
+    <table border="1px solid red">
+        <tr>
+            <th>选中</th>
+            <th>用户名</th>
+            <th>密码</th>
+            <th>性别</th>
+            <th>创建时间</th>
+            <th>上次登录时间</th>
+            <th>操作</th>
+        </tr>
+        <tr v-for="(item,index) of userList1" v-bind:key="index">
+            <td><input type="checkbox" v-bind:value="item.id" /></td>
+            <td>{{item.username}}</td>
+            <td>{{item.password}}</td>
+            <td>{{item.sex}}</td>
+            <td>{{item.createTime}}</td>
+            <td>{{item.lastLogInTime}}</td>
+            <td><button v-on:click="deleteMessage(item.id,item.username,index)">删除</button></td>
+        </tr>
+    </table>
+</div>
+
+<div id="account_list">
+    物品属性列表
+    <table border="1px solid red">
+        <tr>
+            <th>选中</th>
+            <th>名称</th>
+            <th>价格</th>
+            <th>所属用户ID</th>
+            <th>操作</th>
+        </tr>
+        <tr v-for="(item,index) of accountList" v-bind:key="index">
+            <td><input type="checkbox" v-bind:value="item.id" /></td>
+            <td>{{item.name}}</td>
+            <td>{{item.money}}</td>
+            <td>{{item.userId}}</td>
+            <td>
+                <a v-bind:href = "url+item.id">编辑</a>
+                <!--<button v-on:click="updateAcc(item.id)">编辑</button>&nbsp;-->
+                <button v-on:click="deleteMessage(item.id,item.name,index)">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="user_list2">
+    用户属性列表
+    <table border="1px solid red">
+        <tr>
+            <th>选中</th>
+            <th>用户名</th>
+            <th>密码</th>
+            <th>性别</th>
+            <th>创建时间</th>
+            <th>上次登录时间</th>
+            <th>操作</th>
+        </tr>
+        <tr v-for="(item,index) of userList2"  v-bind:value="index" >
+            <td><input type="checkbox" v-bind:value="item.id" /></td>
+            <td>{{item.username}}</td>
+            <td>{{item.password}}</td>
+            <td>{{item.sex}}</td>
+            <td>{{item.createTime}}</td>
+            <td>{{item.lastLogInTime}}</td>
+            <td><button v-on:click="deleteMessage(item.id,item.username,index)">删除</button></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+/*    $("#login_test").click(function() {
+         $.request("/user/userlist",{token: $.cookie('jeesite_token')} ,function(data){
+             if(data){
+                 forEach(data);
+             }
+         })
+    })*/
+
+
+        var listUser1 = new Vue({
+            el:"#user_list1",
+            data:{
+                userList1: []
+            },
+            methods:{
+                showUserList: function(){
+                    $.request("/user/userlist",{token: $.cookie('jeesite_token')} ,function(data){
+                        if(data){
+                            listUser1.userList1 = data;
+                        }
+                    })
+                },
+                deleteMessage:function (id,username,index){
+                    if(confirm("确认删除用户:"+username)){
+                        $.request("/user/deleteUser/"+id,{token: $.cookie('jeesite_token')},function(data){
+                            if(data){
+                                alert("删除成功!");
+                                listUser1.userList1.splice(index,1);
+                            }else{
+                                alert("删除失败!");
+                            }
+
+                        });
+                    }
+                }
+            }
+        });
+
+
+
+
+       var listAcc = new Vue({
+           el:"#account_list",
+           data:{
+               accountList:[],
+               url: "/user/updateFindAccount/"
+           },
+           methods:{
+               loadAccountList: function(){
+                   $.request("/user/findUserAccount/"+$.cookie('jeesite_token_id'),{token: $.cookie('jeesite_token')} ,function(dataAcc){
+                       if(dataAcc){
+                           listAcc.accountList = dataAcc;
+                       }
+                   })
+               },
+               deleteMessage:function (id,name,index){
+                   if(confirm("确认删除商品:"+name)){
+                       $.request("/user/deleteAccount/"+id,{token: $.cookie('jeesite_token')},function(data){
+                           if(data){
+                               alert("删除成功!");
+                               listAcc.accountList.splice(index,1);
+                           }else{
+                               alert("删除失败!");
+                           }
+
+                       });
+                   }
+               },
+               updateAcc:function (id){
+                   $.request("/user/updateFindAccount/"+id,{token: $.cookie('jeesite_token')},function(data){
+                       if(data){
+                           alert("数据丢失！");
+                       }
+                   });
+                   /*$.request("/user/updataAccount/"+id,{token: $.cookie('jeesite_token')},function(data){
+                       if(data){
+                           alert("删除成功!");
+                           listAcc.accountList.splice(index,1);
+                       }else{
+                           alert("删除失败!");
+                       }
+
+                   });*/
+               }
+           }
+       });
+
+
+/*   function userList(){
+       $.request("/user/userlist",{token: $.cookie('jeesite_token')} ,function(dataUser){
+           if(dataUser){
+               userForEach(dataUser);
+           }
+       })
+   }*/
+
+
+       var listUser2 = new Vue({
+           el:"#user_list2",
+           data:{
+               userList2:[]
+           },
+           methods: {
+               loadUserList2: function(){
+                   $.request("/user/userlist",{token: $.cookie('jeesite_token')} ,function(data){
+                       if(data){
+                           listUser2.userList2 = data;
+                       }
+                   })
+               }
+           }
+       });
+
+
+    $(document).ready(function () {
+        listAcc.loadAccountList();
+        listUser2.loadUserList2();
+    })
+</script>
+</body>
+</html>

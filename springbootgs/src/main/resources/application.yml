@@ -1,0 +1,64 @@
+server:
+  port: 8091
+
+##应用监控模组
+#management:
+#  endpoint:
+#    beans:
+#      enabled: true
+#    shutdown:
+#      enabled: false
+#  endpoints:
+#    enabled-by-default: :false
+#
+#info:
+#   app:
+#      name: spring-boot-actuator
+#      version: 1.0.0
+
+management:
+  security:
+    enabled: true #关掉安全认证
+  port: 8088 #管理端口调整成8088
+  context-path: /monitor #actuator的访问路径
+  endpoints:
+    shutdown:
+      enabled: false
+info:
+  app:
+    name: spring-boot-actuator
+    version: 1.0.0
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  thymeleaf:
+    cache: false
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    in-memory: true
+    pool:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    properties:
+      dialect: org.hibernate.dialect.MySQL5Dialect
+

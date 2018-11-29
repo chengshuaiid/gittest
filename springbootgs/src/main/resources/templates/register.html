@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/Vue.min.js"></script>
+    <script src="/static/vue-resource.js"></script>
+    <script src="/static/jquery-1.11.3.js"></script>
+    <script src="/static/extend.js"></script>
+</head>
+<body>
+<div id="register">
+    <form>
+        <input type="text" v-model="name" placeholder="请输入你的用户名"/><span v-html="nameMessage"></span><br/>
+        <input type="text" v-model="pwd" placeholder="密码"/><span v-text="pwd"></span><br/>
+        <input type="text" v-model="repwd" placeholder="确认密码"/><span v-text="repwd"></span><br/>
+
+        <label>男：</label><input type="radio" v-model="sex" value="0"/>
+        <label>女：</label><input type="radio" v-model="sex" value="1"/>  --------   <span v-text="sex"></span>
+        <br/>
+        <span v-html="pwdMessage"></span>
+        <br/>
+        <input type="button" v-on:click="registerSub()" value="注册"/>
+    </form>
+</div>
+
+<script>
+    var register = new Vue({
+        el: "#register",
+        data: {
+            name: "",
+            pwd: "",
+            repwd: "",
+            sex: "",
+            nameMessage: "",
+            pwdMessage: ""
+        },
+        methods: {
+            registerSub: function(){
+                if(this.pwd!==this.repwd){
+                    alert("两次密码不一致");
+                    return;
+                }
+                $.request("/user/userAdd",{"username":register.name,"password":register.pwd,"sex":register.sex},function(data){
+                    if(data){
+                        alert("注册成功！");
+
+                        if(confirm("是否跳转到首页")) {
+                            $.request("/user/login",{"username":register.name,"password":register.pwd},function(result){
+                                if(result != null){
+                                    $.removeCookie('jeesite_token');
+                                    $.cookie('jeesite_token', result.token);
+                                    window.location.href = '/static/index.html';
+                                }
+                            });
+                        }
+                        register.name = "";
+                        register.pwd = "";
+                        register.repwd = "";
+                        register.sex = "";
+                    }else{
+                        alert("注册失败！");
+                    }
+                });
+            }
+        },
+        watch: {
+            repwd: function () {
+                if(this.pwd!==this.repwd){
+                    this.message = "<font color='red'>密码不一致！</font>";
+                }else {
+                    this.message = "";
+                }
+            },
+            name: function(){
+                $.request("/user/findUserByName",{"username":this.name},function(data){
+                    if(data.username!=null){
+                        alert("已注册");
+                        register.nameMessage = "<font color='red'>该用户名已注册</font>";
+                    }else{
+                        alert("2222");
+                        register.nameMessage = "";
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

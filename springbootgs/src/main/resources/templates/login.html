@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <title>Title</title>
+    <script src="/static/Vue.min.js"></script>
+    <script src="/static/vue-resource.js"></script>
+    <script src="/static/jquery-1.11.3.js"></script>
+    <script src="/static/extend.js"></script>
+    <!--<script src="/static/login.js"></script>-->
+</head>
+
+<body>
+    <div style="width: 100%;height: 100%;position: absolute;">
+        <div id="userLogin">
+            <form>
+                <input type="text" id="name" v-model="username" placeholder="请输入你的用户名"/><br/>
+                <input type="text" id="pwd" v-model="password" placeholder="密码"/><br/>
+                <input type="button" v-on:click="loginMethod()" value="登录"/>
+            </form>
+        </div>
+
+        <a href="/user/webReg">注册</a>
+    </div>
+
+    <!--<div id="messageFrame" style="width: 50%;height: 50%;position: fixed;" v-if="message">
+        <div style="width: 200px;height: 50px;position: relative;top:45%;left: 43%;background-color: red;" v-if="show">
+            <p>登录失败</p>
+        </div>
+        <div style="width: 200px;height: 50px;position: relative;top:45%;left: 43%;background-color: green;" v-if="show2">
+            <p>登录成功</p>
+        </div>
+    </div>-->
+
+    <!--<input type="button" id="login_test" value="登录测试"/>
+    <br/>
+    <span id="login_result"></span>-->
+</body>
+
+<script>
+    var login = new Vue({
+        el: "#userLogin",
+        data: {
+            username: "",
+            password: ""
+        },
+        methods: {
+            loginMethod: function () {
+                $.request("/user/login", {"username":login.username,"password":login.password} ,function(data){
+                    if(JSON.stringify(data) != ""){
+                        $.removeCookie('jeesite_token');
+                        $.removeCookie('jeesite_token_id');
+                        $.cookie('jeesite_token', data.token);
+                        $.cookie('jeesite_token_id', data.user.id);
+                        //frame.successFrame();
+                        window.location.href = '/static/index.html';
+                    }else if(JSON.stringify(data) == ""){
+                        alert("登录失败！");
+                    }
+                })
+            },
+        }
+    });
+
+    /*var frame = new Vue({
+        el: "#messageFrame",
+        data: {
+            message: false,
+            show: false,
+            show2: false
+        },
+        methods: {
+            failFrame: function(){
+                login.message = true;
+                login.show = true;
+                setTimeout(function(){login.show = false;login.message = false;},10000);
+            },
+            successFrame: function(){
+                login.message = true;
+                login.show2 = true;
+                setTimeout(function(){login.show2 = false;login.message = false;},10000);
+            }
+        }
+    });*/
+
+</script>
+</html>
